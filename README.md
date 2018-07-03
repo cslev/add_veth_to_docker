@@ -21,7 +21,8 @@ Let me introduce you an ultimate BASH script for easily extend a running Docker 
 - do any further things with freshly made interfaces (e.g., connect to internet/hypervisor switch)
 
 ## Example output
-`$ sudo ./add_veth2container.sh admiring_mahavira veth_root veth_container
+```
+$ sudo ./add_veth2container.sh admiring_mahavira veth_root veth_container
 Checking whether container admiring_mahavira is running...[OK]
 admiring_mahavira is found and up and running
 

@@ -8,6 +8,13 @@ Let me introduce you an ultimate BASH script for easily extend a running Docker 
 ## Usage
 `$ sudo ./add_veth2container <container_name> <veth_name_at_host> <veth_name_in_container>`
 
+## Note
+`<container_name>` is not the image name, as you can have multiple containers running the same image. If you do not provide any name for your running container during the init phase, Docker automatically assigns one to it.
+
+To specify an own name to your container use `--name <my_container>` argument when starting the container.
+
+If your container is already running, you can distille the output of `docker ps` command to figure out what is the name of the corresponding container.
+
 ## What it does
 - checks whether the veth pair and the container you want to connect the veth pair to is up and running
 - binds a pointer to the container's namespace in the root namespace to enable the usage of `ip netns`
@@ -42,4 +49,31 @@ Bringing up veth_root...
 
 Add veth_container to container admiring_mahavira...[OK]
 
-Bring up manually the interface in the container as well...[OK]`
+Bring up manually the interface in the container as well...[OK]
+```
+## Possible errors
+### Interface you wanted to create already exists:
+```
+$ sudo ./add_veth2container.sh admiring_mahavira veth_root veth_container
+There is an interface called veth_root...
+
+Please use another name or remove manually by:
+	$ sudo ip link del veth_root
+```
+
+### Container does not exist or is not up and running
+```
+$ sudo ./add_veth2container.sh macskas_macska veth_roota veth_container
+Checking whether container macskas_macska is running...[FAILURE]
+macskas_macska is not running
+Use sudo docker ps -a to find out more on your own
+
+[FAILED]
+
+
+Cleaning up...
+Removing symlink (if created)...[OK]
+
+Removing veth pair (if created)...[OK]
+
+```

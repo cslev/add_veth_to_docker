@@ -51,7 +51,7 @@ Add veth_container to container admiring_mahavira...[OK]
 
 Bring up manually the interface in the container as well...[OK]
 ```
-## Possible errors
+## Possible errors and their outputs
 ### Interface you wanted to create already exists:
 ```
 $ sudo ./add_veth2container.sh admiring_mahavira veth_root veth_container

@@ -71,10 +71,10 @@ function clean_up {
 	c_print "red" "[FAILED]\n"
 	echo
 	c_print "none" "Cleaning up..." 
-	c_print "yellow" "Removing symlink (if created)..." 0
+	c_print "yellow" "Removing symlink to container ${container_name}(if created)..." 0
 	sudo rm -rf /var/run/netns/$container_name >/dev/null
 	c_print "green" "[OK]\n"
-	c_print "yellow" "Removing veth pair (if created)..." 0
+	c_print "yellow" "Removing veth pair  ${veth_name_at_host} - ${veth_name_in_container} (if created)..." 0
 	sudo ip link del $veth_name_at_host &> /dev/null
 	c_print "green" "[OK]\n"
 	echo 
@@ -84,7 +84,7 @@ function clean_up {
 # ============ PARSE ARGS ================
 if [ $# -ne 3 ]
 then
-	c_print "red" "Insufficient number of attributes$"
+	c_print "red" "Insufficient number of attributes"
 	print_help
 fi
 
@@ -93,17 +93,6 @@ veth_name_at_host=$2
 veth_name_in_container=$3
 
 # ----------------------------------------
-
-
-# check in the beginning whether the interfaces exist
-sudo ip link | grep $veth_name_at_host &> /dev/null
-if [ $? -eq 0 ]
-then
-	c_print "yellow" "There is an interface called ${colors[bold]}${veth_name_at_host}...\n"
-	c_print "yellow" "Please use another name or remove manually by:"
-	c_print "bold" "\t\$ sudo ip link del ${veth_name_at_host}"
-	exit -1
-fi
 
 # ======================= CHECKING CONTAINER RUNNING STATUS AND EXISTENCE =====================================
 c_print "none" "Checking whether container ${colors[bold]}${container_name}${colors[none]} is running..." 0
@@ -137,6 +126,74 @@ then
 	clean_up
 fi
 c_print "green" "[OK]\n"
+
+
+
+
+# check in the beginning whether the interfaces exist
+interface_contains_vethname=$(sudo ip link|grep $veth_name_at_host|cut -d ':' -f 2 |cut -d '@' -f 1|sed "s/ //g")
+c_print "none" "Looking for existing device names as ${veth_name_at_host} at host..." 0
+if [[ $interface_contains_vethname == "" ]]
+then
+	found="NONE"
+	c_print "green" "[OK]"
+else
+	found=$interface_contains_vethname
+	c_print "yellow" "[WARN]"
+	c_print "none" "Similar interfaces found: ${colors[bold]}${colors[yellow]}${found}"
+fi 
+
+
+#check whether that interface's is exactly the one that we are intended to add next 
+if [[ $found != "NONE" ]]
+then
+	for i in $interface_contains_vethname
+	do
+		if [[ $i == $veth_name_at_host ]]
+		then
+			c_print "yellow" "There is already an interface called ${colors[bold]}${colors[red]}${veth_name_at_host} at host\n"
+			c_print "none" "Please use another name or remove manually by:"
+			c_print "bold" "\$ sudo ip link del ${veth_name_at_host}\n\n"
+			exit -1
+		fi
+	done
+fi
+
+#check whether that interface intended to be in the container exists
+interface_contains_vethname=$(sudo docker exec ${container_name} ip link|grep $veth_name_in_container |cut -d ':' -f 2 |cut -d '@' -f 1|sed "s/ //g")
+c_print "none" "Looking for existing device names as ${veth_name_in_container} in the container..." 0
+if [[ $interface_contains_vethname == "" ]]
+then
+	found="NONE"
+	c_print "green" "[OK]"
+else
+	found=$interface_contains_vethname
+	c_print "yellow" "[WARN]"
+	c_print "none" "Similar interfaces found in the container: ${colors[bold]}${colors[yellow]}${found}"
+fi 
+
+
+#check whether that interface's is exactly the one that we are intended to add next 
+if [[ $found != "NONE" ]]
+then
+	for i in $interface_contains_vethname
+	do
+		if [[ $i == $veth_name_in_container ]]
+		then
+			c_print "yellow" "There is already an interface called ${colors[bold]}${colors[red]}${veth_name_in_container}${colors[none]}${colors[yellow]} in container\n"
+			c_print "none" "Please use another name or remove manually (the other end of the veth pair at the host) by:"
+			c_print "bold" "\$ sudo ip link del ${veth_name_at_host}\n\n"
+			exit -1
+		fi
+	done
+fi
+
+c_print "none" "Interface names..." 0
+c_print "green" "[OK]"
+c_print "green" "Interface names are in good shape! None if the exists already!\n\n"
+
+
+
 
 
 c_print "none" "Create veth pair ${colors[bold]}${veth_name_at_host} -- ${veth_name_in_container}${colors[none]}..." 0

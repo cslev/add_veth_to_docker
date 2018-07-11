@@ -190,7 +190,7 @@ fi
 
 c_print "none" "Interface names..." 0
 c_print "green" "[OK]"
-c_print "green" "Interface names are in good shape! None if the exists already!\n\n"
+c_print "green" "Interface names are in a good shape! None of them exists!!\n\n"
 
 
 

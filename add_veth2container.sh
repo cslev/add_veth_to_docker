@@ -70,7 +70,7 @@ function print_help {
 function clean_up {
 	c_print "red" "[FAILED]\n"
 	echo
-	c_print "none" "Cleaning up..." 
+	c_print "none" "Cleaning up..."
 	c_print "yellow" "Removing symlink to container ${container_name}(if created)..." 0
 	sudo rm -rf /var/run/netns/$container_name >/dev/null
 	c_print "green" "[OK]\n"
@@ -98,7 +98,9 @@ veth_name_in_container=$3
 c_print "none" "Checking whether container ${colors[bold]}${container_name}${colors[none]} is running..." 0
 #checking running container is a bit tricky - as -f name=<name> works like grep, so substring of a container_name
 #will also be printed out, but if we compare it to the actual name again, then we can filter properly
-if [[ $(sudo docker ps -a --filter "status=running" -f "name=$container_name" --format '{{.Names}}') != $container_name ]]
+#we need an extra $ sign at the end of name= filter to filter for that specific container and not catch any other
+#containers that might have this name as a substring in the beginning
+if [[ $(sudo docker ps -a --filter "status=running" -f "name=$container_name$" --format '{{.Names}}') != $container_name ]]
 then
 	c_print "red" "[FAILURE]"
 	c_print "red" "${container_name} is not running"

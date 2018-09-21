@@ -77,3 +77,9 @@ Removing symlink (if created)...[OK]
 Removing veth pair (if created)...[OK]
 
 ```
+
+### UPDATE - new script
+A slightly modified version of the script has been added to the repository, which not just creates a veth pair and adds one of the ends to a container, but the other end can be added to another container.
+Use if some networking  is intended to be used between containers without involving the 'hypervisor' layer. Note that IP address management still needs to be done from the host machine via `ip netns exec ...` commands
+
+

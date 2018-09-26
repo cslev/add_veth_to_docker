@@ -78,8 +78,19 @@ Removing veth pair (if created)...[OK]
 
 ```
 
-### UPDATE - new script
+## UPDATE - new script (connect_containers_veth.sh)
 A slightly modified version of the script has been added to the repository, which not just creates a veth pair and adds one of the ends to a container, but the other end can be added to another container.
 Use if some networking  is intended to be used between containers without involving the 'hypervisor' layer. Note that IP address management still needs to be done from the host machine via `ip netns exec ...` commands
+### Usage
+```
+$ sudo ./connect_containers_veth.sh <container_name1> <container_name2> <veth_name_in_container1> <veth_name_in_container2>
+```
+
+## UPDATE - new script (create_namespace4container.sh)
+Another snippet from the main script has been extracted to do smaller things :)
+This script only creates an `ip netns` namespace for the container but nothing more. This way one can do the further things on his/her own, e.g., adding a physical interface to the container.
+```
+$ sudo ./create_namespace4container.sh <container_name>
+```
 
 

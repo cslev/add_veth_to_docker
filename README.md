@@ -1,10 +1,10 @@
 # Add *veth* to your Docker container in one step
 Let me introduce you an ultimate BASH script for easily extend a running Docker container with a new veth interface.
 
-## Get it
+## Get (into) it
 `$ git clone https://github.com/cslev/add_veth_to_docker`
 
-`$ sudo chmod +x add_veth_to_docker/add_veth2container.sh`
+`$ cd add_veth_to_docker`
 
 ## Usage
 `$ sudo ./add_veth2container <container_name> <veth_name_at_host> <veth_name_in_container>`

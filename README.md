@@ -1,6 +1,7 @@
-# Add *veth* to your Docker container in one step
-Let me introduce you an ultimate BASH script for easily extend a running Docker container with a new veth interface.
+# Add *veth* to your Docker container or connect your containers with *veths* in one step
+Let me introduce you an ultimate BASH script for easily extend a running Docker container with a new veth interface or creates more veths for more containers and connect them! 
 
+There is also a script that simply creates a network namespace for your running container on your host to use `ip netns` commands.
 ## Get (into) it
 `$ git clone https://github.com/cslev/add_veth_to_docker`
 
@@ -79,7 +80,7 @@ Removing veth pair (if created)...[OK]
 
 ```
 
-## UPDATE - new script (connect_containers_veth.sh)
+## Connecting multiple containers with vets (connect_containers_veth.sh)
 A slightly modified version of the script has been added to the repository, which not just creates a veth pair and adds one of the ends to a container, but the other end can be added to another container.
 Use if some networking  is intended to be used between containers without involving the 'hypervisor' layer. Note that IP address management still needs to be done from the host machine via `ip netns exec ...` commands
 ### Usage
@@ -87,7 +88,7 @@ Use if some networking  is intended to be used between containers without involv
 $ sudo ./connect_containers_veth.sh <container_name1> <container_name2> <veth_name_in_container1> <veth_name_in_container2>
 ```
 
-## UPDATE - new script (create_namespace4container.sh)
+## Basic ip netns creation for a running container (create_namespace4container.sh)
 Another snippet from the main script has been extracted to do smaller things :)
 This script only creates an `ip netns` namespace for the container but nothing more. This way one can do the further things on his/her own, e.g., adding a physical interface to the container.
 ```
